@@ -81,10 +81,13 @@ Setup Instructions
 Follow these steps to run the project:
 1.	Clone the Repository:
 git clone https://github.com/YourUsername/Encryption-of-Biometric-Traits.git
+
 cd Encryption-of-Biometric-Traits
 2.	Install Required Libraries: Run the following command to install dependencies:
+
 !pip install -r requirements.txt
 3.	Run the Streamlit App:
+
 !streamlit run app.py
 4.	Access the App: Go to http://localhost:8501 or the public URL generated if using Colab.
 ________________________________________
