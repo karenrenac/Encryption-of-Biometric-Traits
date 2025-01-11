@@ -5,5 +5,4 @@ pycryptodomex
 streamlit
 tensorflow
 tf_keras
-scikit-learn
-pickle
+
