@@ -10,8 +10,8 @@ from sklearn.preprocessing import MinMaxScaler
 from Cryptodome.Cipher import AES
 
 # Paths
-IRIS_IMAGES_PATH = r"C:/Users/KAREN/Documents/CAPSTONE/Datasets/MMU-Iris-Database"
-FACE_CSV_PATH = r"C:/Users/KAREN/Documents/CAPSTONE/Datasets/list_attr_celeba.csv"
+IRIS_IMAGES_PATH = "./Datasets/MMU-Iris-Database"
+FACE_CSV_PATH = "./Datasets/list_attr_celeba.csv"
 
 # --- Functions from visualization.py ---
 # Load Precomputed Features
