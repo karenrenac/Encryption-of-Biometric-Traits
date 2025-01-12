@@ -5,4 +5,4 @@ pycryptodomex
 streamlit
 tensorflow
 tf_keras
-
+matplotlib
