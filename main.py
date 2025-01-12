@@ -170,7 +170,7 @@ elif option == "Visualization of Data":
         st.markdown("### Randomly Selected Iris Images")
         cols = st.columns(len(iris_images))
         for i, img in enumerate(iris_images):
-            cols[i].image(img, caption=f"Iris {i+1}", use_column_width=True)
+            cols[i].image(img, caption=f"Iris {i+1}", use_container_width=True)
 
     elif visualization_option == "Face Attributes":
         face_data = load_face_attributes(FACE_CSV_PATH)
