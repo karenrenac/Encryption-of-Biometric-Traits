@@ -5,6 +5,7 @@ import cv2
 from tensorflow.keras.applications import VGG16
 from tensorflow.keras.models import Model
 from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 import os
 
 # Paths for datasets
@@ -13,9 +14,6 @@ FACE_CSV_PATH = r"C:/Users/KAREN/Documents/CAPSTONE/Datasets/list_attr_celeba.cs
 
 # --- Backend Functions ---
 def load_iris_data(data_path, image_size=(128, 128)):
-    """
-    Load and preprocess iris images from nested dataset structure.
-    """
     images = []
     for subject_folder in os.listdir(data_path):
         subject_path = os.path.join(data_path, subject_folder)
@@ -34,47 +32,59 @@ def load_iris_data(data_path, image_size=(128, 128)):
     return images
 
 def preprocess_for_cnn(images, target_size=(224, 224)):
-    """
-    Preprocess grayscale images to match pre-trained CNN input requirements.
-    """
     preprocessed_images = []
     for img in images:
         img = (img * 255).astype(np.uint8)  # Convert float64 to uint8
         img_resized = cv2.resize(img, target_size)
         img_rgb = cv2.cvtColor(img_resized, cv2.COLOR_GRAY2RGB)
         preprocessed_images.append(img_rgb)
-    return np.array(preprocessed_images)
+    preprocessed_images = np.array(preprocessed_images)
+    print(f"Number of preprocessed iris images: {preprocessed_images.shape[0]}, Image shape: {preprocessed_images.shape[1:]}")
+    return preprocessed_images
 
 def extract_features(model, images):
-    """
-    Extract features using a pre-trained CNN model.
-    """
     features = model.predict(images, verbose=1)
-    return features.reshape(features.shape[0], -1)
+    features = features.reshape(features.shape[0], -1)
+    print(f"Number of extracted iris features: {features.shape}")
+    return features
 
 def preprocess_face_csv(csv_path):
-    """
-    Preprocess face CSV file: replace -1 with 0, drop 'image_id', and standardize data.
-    """
     face_df = pd.read_csv(csv_path)
     numeric_face_df = face_df.drop(columns=['image_id']).replace({-1: 0})
     return numeric_face_df
 
-def apply_pca_to_face_data(face_data, n_components=10):
-    """
-    Apply PCA to the face attributes data.
-    """
+def apply_pca_to_face_data(face_data, variance_threshold=0.95):
+    # Standardize the data
+    scaler = StandardScaler()
+    standardized_face_data = scaler.fit_transform(face_data)
+
+    # Fit PCA
+    pca = PCA()
+    pca_features = pca.fit_transform(standardized_face_data)
+    explained_variance_ratio = pca.explained_variance_ratio_
+    
+    # Calculate cumulative variance
+    cumulative_variance = np.cumsum(explained_variance_ratio)
+    
+    # Determine the number of components needed to meet the variance threshold
+    n_components = np.argmax(cumulative_variance >= variance_threshold) + 1
+
+    # Re-run PCA with the determined number of components
     pca = PCA(n_components=n_components)
-    pca_features = pca.fit_transform(face_data)
-    return pca_features
+    pca_features = pca.fit_transform(standardized_face_data)
+
+    # Print the total variance retained
+    total_variance_retained = cumulative_variance[n_components - 1]
+    print(f"Total variance retained: {total_variance_retained * 100:.2f}%")
+    
+    return pca_features, explained_variance_ratio[:n_components], n_components
 
 def combine_features(iris_features, face_features, num_samples=450):
-    """
-    Combine iris and face features, ensuring the sample size matches.
-    """
     np.random.seed(42)  # For reproducibility
     sampled_face_features = face_features[np.random.choice(face_features.shape[0], num_samples, replace=False)]
-    return np.hstack((iris_features, sampled_face_features))
+    combined = np.hstack((iris_features, sampled_face_features))
+    print(f"Number of combined features: {combined.shape}")
+    return combined
 
 # --- Preprocessing Workflow ---
 print("Loading and processing Iris images...")
@@ -88,7 +98,15 @@ iris_features = extract_features(feature_extractor, processed_images)
 
 print("Processing Face attributes CSV...")
 face_data = preprocess_face_csv(FACE_CSV_PATH)
-face_features = apply_pca_to_face_data(face_data, n_components=10)
+
+# Apply dynamic PCA to meet 95% explained variance
+face_features, explained_variance_ratio, n_components = apply_pca_to_face_data(face_data, variance_threshold=0.95)
+
+print(f"PCA completed. Number of components to retain 95% variance: {n_components}")
+
+# Save PCA explained variance ratio as .pkl file
+with open("explained_variance.pkl", "wb") as f:
+    pickle.dump(explained_variance_ratio, f)
 
 print("Combining Iris and Face features...")
 combined_features = combine_features(iris_features, face_features)
@@ -97,4 +115,4 @@ combined_features = combine_features(iris_features, face_features)
 with open("combined_features.pkl", "wb") as f:
     pickle.dump(combined_features, f)
 
-print("Features saved to 'combined_features.pkl'")
+print("Features and explained variance saved.")
