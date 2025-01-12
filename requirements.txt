@@ -7,3 +7,4 @@ tensorflow
 tf_keras
 matplotlib
 seaborn
+scikit-learn
