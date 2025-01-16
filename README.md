@@ -1,6 +1,6 @@
 # Encryption-of-Biometric-Traits
 
-![image](https://github.com/user-attachments/assets/2336cb13-71fa-4640-bb06-33fd2cb5a5d4)
+![image](https://github.com/user-attachments/assets/242e8264-9c3b-431d-a237-bc20bec7f6f1)
 
 ## Overview
 This project demonstrates a secure encryption mechanism based on biometric features and AES (Advanced Encryption Standard). The system utilizes biometric feature extraction, quantization techniques, and AES-GCM (Galois/Counter Mode) encryption to securely encrypt and decrypt user data. The biometric key is dynamically derived from the user’s biometric data (e.g., iris or facial features), ensuring robust and personalized security.
