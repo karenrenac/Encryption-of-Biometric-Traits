@@ -10,13 +10,13 @@ Follow these steps to run the project:
 1. Clone the Repository:
 ```
 git clone https://github.com/karenrenac/Encryption-of-Biometric-Traits.git
-cd Encryption-of-Biometric-Traits 
+cd Encryption-of-Biometric-Traits-using-AES-Encryption
 ```
 2. Precompute the biometric features by running:
 ```
 python precompute_features.py
 ```
-This script processes the iris and face datasets, extracts features, and saves them in a combined_features.pkl file.
+This script processes the iris and face datasets, extracts features, and saves them in a combined_features.pkl file. The explained_variance.pkl file will be used for data visualization
 
 3. Run the Streamlit App:
 ```
