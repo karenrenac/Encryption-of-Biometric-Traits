@@ -53,6 +53,8 @@ The project utilizes the following Python libraries:
 * PyCryptodomex: For AES encryption and decryption.
 * OpenCV: For image processing.
 * Pandas: For handling and preprocessing CSV data.
+* Matplotlib: For creating basic visualizations.
+* Seaborn: For advanced, prettier visualizations.
 
 ________________________________________
 ## Algorithm Workflow
